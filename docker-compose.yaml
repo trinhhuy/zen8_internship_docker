@@ -1,0 +1,63 @@
+services:
+  exam_portal:
+    build:
+      context: ./exam_portal
+      dockerfile: Dockerfile
+    container_name: exam_portal
+    ports:
+      - "3001:3000" # Map port 3000 on the host to port 3000 in the container
+    volumes:
+      - ./exam_portal:/app # Sync local source files for hot-reloading
+      - /app/node_modules # Avoid overwriting node_modules
+    environment:
+      # Pass environment variables directly from the .env file
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
+      NEXT_PUBLIC_CLERK_SIGN_IN_URL: ${NEXT_PUBLIC_CLERK_SIGN_IN_URL}
+      NEXT_PUBLIC_LARAVEL_API_URL: ${NEXT_PUBLIC_LARAVEL_API_URL}
+    restart: always
+
+  strapi:
+    build:
+      context: ./strapi
+      dockerfile: Dockerfile
+    container_name: strapi
+    ports:
+      - "1337:1337"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      DATABASE_CLIENT: ${DATABASE_CLIENT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_KEYS: ${APP_KEYS}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+    volumes:
+      - ./strapi:/srv/app
+      - /srv/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data:z
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      interval: 10s     # How often to check (10 seconds)
+      timeout: 5s       # Timeout for each check
+      retries: 5        # Number of retries before marking as unhealthy
+      start_period: 20s # Wait before starting health checks (to allow PostgreSQL to initialize)

@@ -1,0 +1,6 @@
+[submodule "exam_portal"]
+	path = exam_portal
+	url = git@github.com:trinhhuy/zen8_internship_exam_portal.git
+[submodule "strapi"]
+	path = strapi
+	url = git@github.com:trinhhuy/zen8_internship.git

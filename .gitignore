@@ -1,0 +1,49 @@
+# Ignore Docker-related files
+.dockerignore
+docker-compose.override.yml
+docker-compose.prod.yml
+.env
+.env.local
+.env.development
+.env.production
+
+# Ignore Build and Runtime Files
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore Docker Volumes & Temporary Files
+docker-compose.override.yml
+docker-compose.yml~
+volumes/
+data/
+*.pid
+*.sock
+
+# Ignore Docker Build Cache & Artifacts
+.DS_Store
+tmp/
+*.swp
+.vscode/
+.idea/
+.project/
+*.bak
+*.old
+.cache/
+*.tar
+*.gz
+
+# Ignore Git-ignored files inside containers
+**/.git
+
+postgres_data/
