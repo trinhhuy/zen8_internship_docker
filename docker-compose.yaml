@@ -5,18 +5,14 @@ services:
       dockerfile: Dockerfile
     container_name: exam_portal
     ports:
-      - "3001:3000" # Map port 3000 on the host to port 3000 in the container
+      - "3000:3000" # Map port 3000 on the host to port 3000 in the container
     volumes:
       - ./exam_portal:/app # Sync local source files for hot-reloading
       - /app/node_modules # Avoid overwriting node_modules
     environment:
       # Pass environment variables directly from the .env file
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
-      NEXT_PUBLIC_CLERK_SIGN_IN_URL: ${NEXT_PUBLIC_CLERK_SIGN_IN_URL}
-      NEXT_PUBLIC_LARAVEL_API_URL: ${NEXT_PUBLIC_LARAVEL_API_URL}
+      APP_URL: ${APP_URL}
     restart: always
-
   strapi:
     build:
       context: ./strapi
